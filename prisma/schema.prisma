@@ -1,0 +1,32 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Todo {
+  id          String   @id @default(cuid())
+  title       String
+  description String?  
+  startDate   DateTime?
+  dueDate     DateTime?
+  completed   Boolean? @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relação many-to-many com Tag (cada Todo pode ter 0 ou mais tags)
+  tags Tag[] @relation("TodoTags")
+}
+
+model Tag {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relação many-to-many com Todo (cada Tag pode estar associada a 0 ou mais todos)
+  todos     Todo[]   @relation("TodoTags")
+}
